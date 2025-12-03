@@ -1,0 +1,16 @@
+package config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ComponentScan(basePackages = "main")
+public class ProjectConfig {
+
+    @Bean
+    Integer ten(){
+        return 10;
+    }
+
+}
