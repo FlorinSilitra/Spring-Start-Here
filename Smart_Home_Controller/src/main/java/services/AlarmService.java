@@ -3,8 +3,12 @@ package services;
 import aspects.ToLog;
 import aspects.ValidateAlarmOperation;
 import model.Alarm;
+import model.Event;
 import org.springframework.stereotype.Service;
 import repositories.AlarmRepository;
+
+import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Service
 public class AlarmService {
@@ -23,6 +27,23 @@ public class AlarmService {
     @ToLog
     @ValidateAlarmOperation
     public String switchAlarm(Alarm alarm, boolean turnOn) {
-        return alarmRepository.switchAlarm(alarm, turnOn);
+        alarm.setLastEvent(new Event(LocalDateTime.now(), turnOn));
+        alarmRepository.switchAlarm(alarm);
+
+        return "SUCCESS";
+    }
+
+    /**
+     * Add an alarm to the repository
+     */
+    public void addAlarm(Alarm alarm) {
+        alarmRepository.add(alarm);
+    }
+
+    /**
+     * Return all alarms from repository
+     */
+    public Collection<Alarm> getAll() {
+        return alarmRepository.getAll();
     }
 }

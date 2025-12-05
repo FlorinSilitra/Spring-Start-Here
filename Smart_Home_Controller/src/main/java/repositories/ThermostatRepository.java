@@ -2,7 +2,10 @@ package repositories;
 
 import model.Thermostat;
 
+import java.util.Collection;
+
 public interface ThermostatRepository {
-    String setTemperature(Thermostat thermostat, double newTemperature);
-    String switchThermostat(Thermostat thermostat, boolean turnOn);
+    void switchThermostat(Thermostat thermostat);
+    void add(Thermostat thermostat);
+    Collection<Thermostat> getAll();
 }

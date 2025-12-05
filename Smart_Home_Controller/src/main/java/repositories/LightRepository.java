@@ -2,7 +2,10 @@ package repositories;
 
 import model.Light;
 
+import java.util.Collection;
+
 public interface LightRepository {
-    String switchLight(Light light, boolean turnOn);
-    String switchLight(Light light, int brightnessLevel);
+    void switchLight(Light light);
+    void add(Light light);
+    Collection<Light> getAll();
 }

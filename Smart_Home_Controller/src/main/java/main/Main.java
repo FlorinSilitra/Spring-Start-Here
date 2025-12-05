@@ -12,12 +12,13 @@ import services.ThermostatService;
 
 import java.time.LocalDateTime;
 import java.util.logging.Logger;
+import static java.lang.Thread.sleep;
 
 public class Main {
 
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         var context = new AnnotationConfigApplicationContext(ProjectConfig.class);
 
         var lightService = context.getBean(LightService.class);
@@ -29,6 +30,15 @@ public class Main {
                 new Event(LocalDateTime.now(), false),
                 0
         );
+
+        Light outsideLight = new Light(
+                "Outside Light",
+                new Event(LocalDateTime.now(), true),
+                23
+        );
+
+        lightService.addLight(livingRoomLight);
+        lightService.addLight(outsideLight);
 
         String result = lightService.switchLight(livingRoomLight, true);
         logger.info("Result: " + result + "\n");
@@ -48,12 +58,17 @@ public class Main {
         result = lightService.switchLight(livingRoomLight, 42);
         logger.info("Result: " + result+ "\n");
 
+        lightService.getAll().forEach(System.out::println);
+        System.out.println();
+        sleep(1000);
 
         Thermostat livingRoomThermostat = new Thermostat(
                 "Living Room Thermostat",
                 new Event(LocalDateTime.now(), false),
                 0
         );
+
+        thermostatService.addThermostat(livingRoomThermostat);
 
         result = thermostatService.switchThermostat(livingRoomThermostat, true);
         logger.info("Result: " + result + "\n");
@@ -73,11 +88,22 @@ public class Main {
         result = thermostatService.setTemperature(livingRoomThermostat, 18.0);
         logger.info("Result: " + result + "\n");
 
+        thermostatService.getAll().forEach(System.out::println);
+        System.out.println();
+        sleep(1000);
+
 
         Alarm homeAlarm = new Alarm(
                 "Home Alarm",
                 new Event(LocalDateTime.now(), false) //
         );
+        Alarm garageAlarm = new Alarm(
+                "Garage Alarm",
+                new Event(LocalDateTime.now(), true) //
+        );
+
+        alarmService.addAlarm(homeAlarm);
+        alarmService.addAlarm(garageAlarm);
 
         result = alarmService.switchAlarm(homeAlarm, true);
         logger.info("Result: " + result + "\n");
@@ -87,6 +113,8 @@ public class Main {
 
         result = alarmService.switchAlarm(homeAlarm, false);
         logger.info("Result: " + result + "\n");
+
+        alarmService.getAll().forEach(System.out::println);
 
         context.close();
     }

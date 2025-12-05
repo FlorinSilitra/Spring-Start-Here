@@ -3,9 +3,13 @@ package services;
 import aspects.ToLog;
 import aspects.ValidateThermostatPower;
 import aspects.ValidateThermostatTemperature;
+import model.Event;
 import model.Thermostat;
 import org.springframework.stereotype.Service;
 import repositories.ThermostatRepository;
+
+import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Service
 public class ThermostatService {
@@ -24,7 +28,18 @@ public class ThermostatService {
     @ToLog
     @ValidateThermostatPower
     public String switchThermostat(Thermostat thermostat, boolean turnOn) {
-        return thermostatRepository.switchThermostat(thermostat, turnOn);
+        thermostat.setLastEvent(new Event(LocalDateTime.now(), turnOn));
+
+        if(turnOn){
+            thermostat.setTemperature(22);
+        }
+        else
+        {
+            thermostat.setTemperature(0);
+        }
+        thermostatRepository.switchThermostat(thermostat);
+
+        return "SUCCESS";
     }
 
     /**
@@ -35,6 +50,25 @@ public class ThermostatService {
     @ToLog
     @ValidateThermostatTemperature
     public String setTemperature(Thermostat thermostat, double newTemperature) {
-        return thermostatRepository.setTemperature(thermostat, newTemperature);
+        thermostat.setLastEvent(new Event(LocalDateTime.now(), true));
+        thermostat.setTemperature(newTemperature);
+
+        thermostatRepository.switchThermostat(thermostat);
+
+        return "SUCCESS";
+    }
+
+    /**
+     * Add a thermostat to the repository
+     */
+    public void addThermostat(Thermostat thermostat) {
+        thermostatRepository.add(thermostat);
+    }
+
+    /**
+     * Return all thermostats from repository
+     */
+    public Collection<Thermostat> getAll() {
+        return thermostatRepository.getAll();
     }
 }
